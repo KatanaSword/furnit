@@ -15,7 +15,7 @@ export const OrderStatus = {
 
 export const AvailableOrderStatus = Object.values(OrderStatus);
 
-// add payment provider service
+// TODO: add payment provider service
 export const PaymentProvider = {
   UNKNOWN: "UNKNOWN",
 };
