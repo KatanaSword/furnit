@@ -1,5 +1,10 @@
 export const DB_NAME = "Furnit";
 
+export const options = {
+  httpOnly: true,
+  secure: true,
+};
+
 export const UserRoles = {
   ADMIN: "ADMIN",
   USER: "USER",
