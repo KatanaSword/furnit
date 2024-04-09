@@ -1,9 +1,9 @@
-import { Button, Img, Input, Text } from "../../components";
+import { Button, Img, Text } from "../../components";
 
-const CartColumnFrame = (props) => {
+const CartColumnFrame = ({ className, offer, description, subscribe }) => {
   return (
     <>
-      <div className={props.className}>
+      <div className={className}>
         <div className="flex md:flex-col flex-row gap-11 items-center justify-start w-full">
           <div className="flex flex-1 flex-col gap-10 items-start justify-start w-full">
             <div className="flex flex-col gap-2.5 items-start justify-start w-full">
@@ -11,18 +11,18 @@ const CartColumnFrame = (props) => {
                 className="leading-[60.00px] max-w-[593px] md:max-w-full sm:text-4xl md:text-[38px] text-[40px] text-gray-53 tracking-[-0.50px]"
                 size="txtRalewayRomanBold40Gray53"
               >
-                {props?.offer}
+                {offer}
               </Text>
               <Text
                 className="leading-[35.00px] max-w-[593px] md:max-w-full text-base text-gray-53 tracking-[-0.50px]"
-                size="txtRubikRegular16"
+                size="txtRubikRegular16Gray53"
               >
-                {props?.description}
+                {description}
               </Text>
             </div>
             <div className="flex sm:flex-col flex-row gap-px items-start justify-start w-full">
               <Button className="bg-bluegray-900 cursor-pointer font-bold font-rubik leading-[normal] py-[23px] text-center text-lg text-yellow-100 tracking-[-0.50px] w-[157px]">
-                {props?.subscribe}
+                {subscribe}
               </Button>
             </div>
           </div>
@@ -35,19 +35,6 @@ const CartColumnFrame = (props) => {
       </div>
     </>
   );
-};
-
-CartColumnFrame.defaultProps = {
-  offer: "Subscribe now and get 10% off all items",
-  description: (
-    <>
-      Subscribing now for just 1500 rupees! Enjoy an exclusive 10% discount on
-      all items, ensuring you save while elevating your space with our
-      high-quality furniture. Subscribe today and indulge in stylish living for
-      less!
-    </>
-  ),
-  subscribe: "Subscribe",
 };
 
 export default CartColumnFrame;
