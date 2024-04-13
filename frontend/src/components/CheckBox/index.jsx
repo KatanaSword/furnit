@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { ErrorMessage } from "../../components/ErrorMessage";
 
 const CheckBox = React.forwardRef(
@@ -11,10 +10,6 @@ const CheckBox = React.forwardRef(
       children,
       label = "",
       errors = [],
-      shape = "",
-      size = "",
-      variant = "",
-      color = "",
       id = "checkbox_id",
       onChange,
       ...restProps
@@ -45,12 +40,5 @@ const CheckBox = React.forwardRef(
     );
   }
 );
-
-CheckBox.propTypes = {
-  inputClassName: PropTypes.string,
-  className: PropTypes.string,
-  name: PropTypes.string,
-  label: PropTypes.string,
-};
 
 export { CheckBox };

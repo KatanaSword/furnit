@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button, Img, Text } from "../../components";
 
-const Footer = (props) => {
+const Footer = ({ className }) => {
   return (
     <>
-      <footer className={props.className}>
+      <footer className={className}>
         <div className="flex flex-col md:gap-10 gap-[149px] items-center justify-center w-full">
           <div className="flex md:flex-col flex-row md:gap-10 items-start justify-between w-full">
             <div className="flex flex-col gap-4 items-start justify-start w-auto">
@@ -29,14 +29,14 @@ const Footer = (props) => {
             <div className="flex flex-col gap-5 items-start justify-start w-[209px]">
               <Text
                 className="text-gray-53 text-xl tracking-[-0.50px] w-auto"
-                size="txtRalewayRomanSemiBold20"
+                size="txtRalewayRomanSemiBold20Gray53"
               >
                 Customer
               </Text>
               <div className="flex flex-col gap-6 items-start justify-start w-auto">
                 <Link to="/order">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Order Status
@@ -44,7 +44,7 @@ const Footer = (props) => {
                 </Link>
                 <Link to="/">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Collections
@@ -52,7 +52,7 @@ const Footer = (props) => {
                 </Link>
                 <Link to="/aboutus">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Our Story
@@ -60,7 +60,7 @@ const Footer = (props) => {
                 </Link>
                 <Link to="/">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Affiliates
@@ -68,7 +68,7 @@ const Footer = (props) => {
                 </Link>
                 <Link to="/">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Security
@@ -79,14 +79,14 @@ const Footer = (props) => {
             <div className="flex flex-col gap-5 items-start justify-start w-[209px]">
               <Text
                 className="text-gray-53 text-xl tracking-[-0.50px] w-auto"
-                size="txtRalewayRomanSemiBold20"
+                size="txtRalewayRomanSemiBold20Gray53"
               >
                 Information
               </Text>
               <div className="flex flex-col gap-6 items-start justify-start w-auto">
-                <Link to="">
+                <Link to="/contactus">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Customer Service
@@ -94,7 +94,7 @@ const Footer = (props) => {
                 </Link>
                 <Link to="">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     Careers
@@ -102,7 +102,7 @@ const Footer = (props) => {
                 </Link>
                 <Link to="/contactus">
                   <Text
-                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto"
+                    className="text-gray-50_a3 text-sm tracking-[-0.50px] w-auto hover:text-yellow-100"
                     size="txtRubikRegular14Gray50a3"
                   >
                     FAQ
@@ -113,33 +113,33 @@ const Footer = (props) => {
             <div className="flex flex-col gap-5 items-start justify-start w-[220px]">
               <Text
                 className="text-gray-53 text-xl tracking-[-0.50px] w-auto"
-                size="txtRalewayRomanSemiBold20"
+                size="txtRalewayRomanSemiBold20Gray53"
               >
                 Follow Us
               </Text>
               <div className="flex flex-row gap-5 items-start justify-start w-auto">
-                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10">
+                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10 hover:bg-opacity-70">
                   <Img
                     className="h-6"
                     src="images/img_camera.svg"
                     alt="camera_One"
                   />
                 </Button>
-                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10">
+                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10 hover:bg-opacity-70">
                   <Img
                     className="h-6"
                     src="images/img_facebook.svg"
                     alt="facebook_One"
                   />
                 </Button>
-                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10">
+                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10 hover:bg-opacity-70">
                   <Img
                     className="h-6"
                     src="images/img_twitter.svg"
                     alt="twitter_One"
                   />
                 </Button>
-                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10">
+                <Button className="bg-yellow-100 flex h-10 items-center justify-center p-2 rounded-[50%] w-10 hover:bg-opacity-70">
                   <Img
                     className="h-6"
                     src="images/img_music.svg"
@@ -154,12 +154,12 @@ const Footer = (props) => {
               className="text-base text-gray-50_a3 tracking-[-0.50px] w-auto"
               size="txtRubikRomanRegular16"
             >
-              © Copyright 2022. All Rights Reserved.
+              © Copyright 2024. All Rights Reserved.
             </Text>
             <div className="flex flex-row gap-[41px] items-start justify-start w-[272px]">
               <Link to="/">
                 <Text
-                  className="flex-1 text-base text-gray-50_a3 tracking-[-0.50px] w-auto"
+                  className="flex-1 text-base text-gray-50_a3 tracking-[-0.50px] w-auto hover:text-yellow-100"
                   size="txtRubikRomanRegular16"
                 >
                   Terms of condition
@@ -167,7 +167,7 @@ const Footer = (props) => {
               </Link>
               <Link to="/">
                 <Text
-                  className="text-base text-gray-50_a3 tracking-[-0.50px] w-auto"
+                  className="text-base text-gray-50_a3 tracking-[-0.50px] w-auto hover:text-yellow-100"
                   size="txtRubikRomanRegular16"
                 >
                   Privacy Policy
@@ -180,7 +180,5 @@ const Footer = (props) => {
     </>
   );
 };
-
-Footer.defaultProps = {};
 
 export default Footer;

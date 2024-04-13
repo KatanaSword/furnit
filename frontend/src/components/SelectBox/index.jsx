@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import Select from "react-select";
-import PropTypes from "prop-types";
 import { ErrorMessage } from "../ErrorMessage";
 
 const SelectBox = React.forwardRef(
@@ -17,15 +16,11 @@ const SelectBox = React.forwardRef(
       value = "",
       errors = [],
       indicator,
-      shape = "",
-      size = "",
-      variant = "",
-      color = "",
       ...restProps
     },
     ref
   ) => {
-    const [selectedVal, setSelectedVal] = React.useState(value);
+    const [selectedVal, setSelectedVal] = useState(value);
 
     const handleChange = (data) => {
       setSelectedVal(data);
@@ -121,25 +116,4 @@ const SelectBox = React.forwardRef(
   }
 );
 
-SelectBox.propTypes = {
-  placeholder: PropTypes.string,
-  className: PropTypes.string,
-  options: PropTypes.array,
-  isSearchable: PropTypes.bool,
-  placeholderClassName: PropTypes.string,
-  isMulti: PropTypes.bool,
-  onChange: PropTypes.func,
-  value: PropTypes.string,
-};
-
-SelectBox.defaultProps = {
-  placeholder: "Select",
-  className: "",
-  isSearchable: false,
-  placeholderClassName: "",
-  isMulti: false,
-  value: "",
-  options: [],
-  onChange: () => {},
-};
 export { SelectBox };

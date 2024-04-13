@@ -21,7 +21,7 @@ const CartColumnFrame = ({ className, offer, description, subscribe }) => {
               </Text>
             </div>
             <div className="flex sm:flex-col flex-row gap-px items-start justify-start w-full">
-              <Button className="bg-bluegray-900 cursor-pointer font-bold font-rubik leading-[normal] py-[23px] text-center text-lg text-yellow-100 tracking-[-0.50px] w-[157px]">
+              <Button className="bg-bluegray-900 cursor-pointer font-bold font-rubik leading-[normal] py-[23px] text-center text-lg text-yellow-100 tracking-[-0.50px] w-[157px] hover:bg-yellow-100 hover:text-bluegray-900">
                 {subscribe}
               </Button>
             </div>

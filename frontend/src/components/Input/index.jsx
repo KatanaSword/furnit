@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { ErrorMessage } from "../../components/ErrorMessage";
 
 const Input = React.forwardRef(
@@ -16,10 +15,6 @@ const Input = React.forwardRef(
       prefix,
       suffix,
       onChange,
-      shape = "",
-      size = "",
-      variant = "",
-      color = "",
       ...restProps
     },
     ref
@@ -30,12 +25,7 @@ const Input = React.forwardRef(
 
     return (
       <>
-        <div
-          className={`${wrapClassName} 
-               
-               
-              `}
-        >
+        <div className={`${wrapClassName}`}>
           {!!label && label}
           {!!prefix && prefix}
           <input
@@ -54,13 +44,5 @@ const Input = React.forwardRef(
     );
   }
 );
-
-Input.propTypes = {
-  wrapClassName: PropTypes.string,
-  className: PropTypes.string,
-  name: PropTypes.string,
-  placeholder: PropTypes.string,
-  type: PropTypes.string,
-};
 
 export { Input };

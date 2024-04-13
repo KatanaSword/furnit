@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 
 const PagerIndicator = ({
   className,
@@ -11,9 +11,9 @@ const PagerIndicator = ({
   unselectedWrapperCss = "",
   ...restProps
 }) => {
-  const [slidesToShow, setSlidesToShow] = React.useState(0);
+  const [slidesToShow, setSlidesToShow] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const _slidesToShow = sliderRef?.current?.state?.itemsInSlide;
     setSlidesToShow(_slidesToShow);
   }, [sliderRef]);
