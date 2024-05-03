@@ -3,7 +3,7 @@ import { apiError } from "../utils/apiError.js";
 import { User } from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 
-const verifyToken = asyncHandler(async (req, _, next) => {
+const verifyJWT = asyncHandler(async (req, _, next) => {
   try {
     const token =
       req.cookies?.accessToken ||
@@ -15,9 +15,8 @@ const verifyToken = asyncHandler(async (req, _, next) => {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECURE);
 
     const user = await User.findById(decodedToken?._id).select(
-      "-password, refreshToken"
+      "-password, -refreshToken"
     );
-
     if (!user) {
       throw new apiError(401, "Missing or invalid access token");
     }
@@ -32,4 +31,4 @@ const verifyToken = asyncHandler(async (req, _, next) => {
   }
 });
 
-export { verifyToken };
+export { verifyJWT };
