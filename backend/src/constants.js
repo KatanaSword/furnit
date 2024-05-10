@@ -20,9 +20,9 @@ export const OrderStatus = {
 
 export const AvailableOrderStatus = Object.values(OrderStatus);
 
-// TODO: add payment provider service
 export const PaymentProvider = {
   UNKNOWN: "UNKNOWN",
+  RAZORPAY: "RAZORPAY",
 };
 
 export const AvailablePaymentProvider = Object.values(PaymentProvider);
@@ -33,3 +33,5 @@ export const CouponTypes = {
 };
 
 export const AvailableCouponType = Object.values(CouponTypes);
+
+export const USER_TEMPORARY_TOKEN_EXPIRY = 5 * 60 * 1000;
