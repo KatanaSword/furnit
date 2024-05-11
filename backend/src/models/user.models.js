@@ -1,13 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
-import { AvailableUserRoles, UserRoles } from "../constants";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
+import {
+  AvailableUserRoles,
+  UserRoles,
+  USER_TEMPORARY_TOKEN_EXPIRY,
+} from "../constants.js";
 
 const userSchema = new Schema(
   {
     fullName: {
       type: String,
       required: true,
-      lowercase: true,
       trim: true,
       index: true,
     },
@@ -29,27 +34,38 @@ const userSchema = new Schema(
     phoneNumber: {
       type: Number,
       required: true,
+      trim: true,
     },
     role: {
       type: String,
       enum: AvailableUserRoles,
       default: UserRoles.USER,
+      required: true,
     },
     password: {
       type: String,
       required: [true, "Password is required"],
     },
     avatar: {
-      type: String,
+      type: {
+        url: String,
+      },
+      default: {
+        url: "https://via.placeholder.com/200x200.png",
+      },
     },
     refreshToken: {
       type: String,
     },
+    forgetPasswordToken: {
+      type: String,
+    },
+    forgetPasswordExpiry: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
-
-export const User = mongoose.model("User", userSchema);
 
 // Hash Password Before Save
 userSchema.pre("save", async function (next) {
@@ -59,7 +75,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // Correct Password
-userSchema.methods.correctPassword = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
@@ -74,7 +90,7 @@ userSchema.methods.generateAccessToken = function () {
     },
     process.env.ACCESS_TOKEN_SECURE,
     {
-      expiry: process.env.ACCESS_TOKEN_EXPIRY,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
 };
@@ -82,6 +98,22 @@ userSchema.methods.generateAccessToken = function () {
 // Generate Refresh Token
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECURE, {
-    expiry: process.env.REFRESH_TOKEN_EXPIRY,
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
   });
 };
+
+// Generate Temporary Token
+userSchema.methods.generateTemporaryToken = function () {
+  const unHashedToken = crypto.randomBytes(20).toString("hex");
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(unHashedToken)
+    .digest("hex");
+
+  const tokenExpiry = Date.now() + USER_TEMPORARY_TOKEN_EXPIRY;
+
+  return { unHashedToken, hashedToken, tokenExpiry };
+};
+
+export const User = mongoose.model("User", userSchema);
