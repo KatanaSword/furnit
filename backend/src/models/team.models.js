@@ -6,14 +6,18 @@ const teamSchema = new Schema(
   {
     name: {
       type: String,
+      trim: true,
       required: true,
     },
     occupation: {
       type: String,
+      trim: true,
       required: true,
     },
     image: {
-      type: String,
+      type: {
+        url: String,
+      },
       required: true,
     },
     owner: {
