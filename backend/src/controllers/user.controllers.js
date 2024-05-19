@@ -2,7 +2,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 import { UserRoles, options } from "../constants.js";
 import { sendEmail, forgotPasswordMailgenContent } from "../utils/mail.js";
@@ -381,20 +384,26 @@ const updateAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file is missing");
   }
 
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
-  if (!avatar.url) {
+  const avatar = await uploadOnCloudinary(avatarLocalPath, "furnit/users");
+  if (!avatar) {
     throw new ApiError(
-      400,
+      500,
       "Failed to upload avatar. Please ensure the file format is supported."
     );
   }
 
+  const user = await User.findById(req.user?._id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
   const updateAvatar = await User.findByIdAndUpdate(
-    req.user?._id,
+    user,
     {
       $set: {
         avatar: {
           url: avatar.url,
+          publicId: avatar.public_id,
         },
       },
     },
@@ -407,13 +416,17 @@ const updateAvatar = asyncHandler(async (req, res) => {
     );
   }
 
+  const publicId = user.avatar.publicId;
+  await deleteFromCloudinary(publicId);
+
   return res
     .status(200)
     .json(new ApiResponse(200, updateAvatar, "Update avatar successful."));
 });
 
 const updateAccountDetail = asyncHandler(async (req, res) => {
-  const { fullName, username, phoneNumber, email } = req.body;
+  const { fullName, username, phoneNumber, email, pronouns, birthday } =
+    req.body;
 
   try {
     const updateAccount = await User.findByIdAndUpdate(
@@ -424,6 +437,8 @@ const updateAccountDetail = asyncHandler(async (req, res) => {
           username,
           phoneNumber,
           email,
+          pronouns,
+          birthday,
         },
       },
       {
