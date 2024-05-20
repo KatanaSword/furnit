@@ -7,14 +7,20 @@ const productSchema = new Schema(
   {
     name: {
       type: String,
+      trim: true,
+      unique: true,
       required: true,
     },
     description: {
       type: String,
+      trim: true,
       required: true,
     },
     image: {
-      type: String,
+      type: {
+        url: String,
+        publicId: String,
+      },
       required: true,
     },
     price: {
