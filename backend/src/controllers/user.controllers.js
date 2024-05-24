@@ -47,11 +47,11 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
-  const existedUser = await User.findOne({
+  const userExist = await User.findOne({
     $or: [{ username }, { email }, { phoneNumber }],
   });
 
-  if (existedUser) {
+  if (userExist) {
     throw new ApiError(
       409,
       "The user account already exists. Please use a different username, email, and phoneNumber to sign up"
@@ -379,9 +379,14 @@ const assignRole = asyncHandler(async (req, res) => {
 });
 
 const updateAvatar = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user?._id);
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
   const avatarLocalPath = req.file?.path;
   if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar file is missing");
+    throw new ApiError(400, "Avatar is missing");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath, "furnit/users");
@@ -390,11 +395,6 @@ const updateAvatar = asyncHandler(async (req, res) => {
       500,
       "Failed to upload avatar. Please ensure the file format is supported."
     );
-  }
-
-  const user = await User.findById(req.user?._id);
-  if (!user) {
-    throw new ApiError(404, "User not found");
   }
 
   const updateAvatar = await User.findByIdAndUpdate(

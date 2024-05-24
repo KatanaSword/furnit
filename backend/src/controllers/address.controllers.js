@@ -47,7 +47,7 @@ const createAddresses = asyncHandler(async (req, res) => {
 
 const getAllAddresses = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
-  const addressAggregation = await Address.aggregate([
+  const addressAggregation = Address.aggregate([
     { $match: { owner: req.user._id } },
   ]);
   if (addressAggregation.length < 1) {
@@ -116,7 +116,9 @@ const deleteAddress = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Address delete successfully"));
+    .json(
+      new ApiResponse(200, { deleteAddress }, "Address delete successfully")
+    );
 });
 
 export {

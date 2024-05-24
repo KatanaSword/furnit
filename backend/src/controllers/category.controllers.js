@@ -6,8 +6,8 @@ import { getMongoosePaginationOptions } from "../utils/helpers.js";
 
 const getAllCategories = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
-  const categoryAggregate = await Category.aggregate([{ $match: {} }]);
-  if (categoryAggregate < 1) {
+  const categoryAggregate = Category.aggregate([{ $match: {} }]);
+  if (categoryAggregate.length < 1) {
     throw new ApiError(404, "Category not found");
   }
   const categories = await Category.aggregatePaginate(
@@ -33,8 +33,8 @@ const createCategories = asyncHandler(async (req, res) => {
     );
   }
 
-  const existedCategory = await Category.findOne({ $or: [{ name }] });
-  if (existedCategory) {
+  const categoryExist = await Category.findOne({ $or: [{ name }] });
+  if (categoryExist) {
     throw new ApiError(
       409,
       "The category already exists. Please use a different name to create category."
@@ -113,7 +113,9 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Category delete successfully"));
+    .json(
+      new ApiResponse(200, { deleteCategory }, "Category delete successfully")
+    );
 });
 
 export {
