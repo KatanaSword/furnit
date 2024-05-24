@@ -10,7 +10,7 @@ import { getMongoosePaginationOptions } from "../utils/helpers.js";
 
 const getAllMembers = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
-  const memberAggregate = await Team.aggregate([{ $match: {} }]);
+  const memberAggregate = Team.aggregate([{ $match: {} }]);
   if (memberAggregate.length < 1) {
     throw new ApiError(404, "Member not found");
   }
@@ -43,10 +43,7 @@ const createMembers = asyncHandler(async (req, res) => {
 
   const imageLocalPath = req.file?.path;
   if (!imageLocalPath) {
-    throw new ApiError(
-      400,
-      "Invalid file upload. Please select a valid image file."
-    );
+    throw new ApiError(400, "Team member image is missing");
   }
 
   const image = await uploadOnCloudinary(imageLocalPath, "furnit/members");
@@ -99,21 +96,6 @@ const getMemberById = asyncHandler(async (req, res) => {
 const updateMembers = asyncHandler(async (req, res) => {
   const { name, occupation } = req.body;
   const { memberId } = req.params;
-  const imageLocalPath = req.file?.path;
-  if (!imageLocalPath) {
-    throw new ApiError(
-      400,
-      "Invalid file upload. Please select a valid image file."
-    );
-  }
-
-  const image = await uploadOnCloudinary(imageLocalPath, "furnit/members");
-  if (!image) {
-    throw new ApiError(
-      500,
-      "Failed to upload image. Please ensure the file format is supported."
-    );
-  }
 
   const member = await Team.findById(memberId);
   if (!member) {
@@ -121,15 +103,11 @@ const updateMembers = asyncHandler(async (req, res) => {
   }
 
   const updateMembers = await Team.findByIdAndUpdate(
-    memberId,
+    member,
     {
       $set: {
         name,
         occupation,
-        image: {
-          url: image.url,
-          publicId: image.public_id,
-        },
       },
     },
     { new: true }
@@ -141,12 +119,59 @@ const updateMembers = asyncHandler(async (req, res) => {
     );
   }
 
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updateMembers, "Member update successful"));
+});
+
+const updateMemberImage = asyncHandler(async (req, res) => {
+  const { memberId } = req.params;
+
+  const member = await Team.findById(memberId);
+  if (!member) {
+    throw new ApiError(404, "Team member does not exist");
+  }
+
+  const imageLocalPath = req.file?.path;
+  if (!imageLocalPath) {
+    throw new ApiError(400, "Team member image is missing");
+  }
+
+  const image = await uploadOnCloudinary(imageLocalPath, "furnit/members");
+  if (!image) {
+    throw new ApiError(
+      500,
+      "Failed to upload image. Please ensure the file format is supported."
+    );
+  }
+
+  const updateImage = await Team.findByIdAndUpdate(
+    member,
+    {
+      $set: {
+        image: {
+          url: image.url,
+          publicId: image.public_id,
+        },
+      },
+    },
+    {
+      new: true,
+    }
+  );
+  if (!updateImage) {
+    throw new ApiError(
+      500,
+      "Failed to update image due to an unexpected server error. Please try again later"
+    );
+  }
+
   const publicId = member.image.publicId;
   await deleteFromCloudinary(publicId);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updateMembers, "Member update successful"));
+    .json(new ApiResponse(200, updateImage, "Member image update successful"));
 });
 
 const deleteMember = asyncHandler(async (req, res) => {
@@ -156,9 +181,12 @@ const deleteMember = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Team member dose not exist");
   }
 
-  const deleteMember = await Team.findByIdAndDelete(memberId);
+  const deleteMember = await Team.findByIdAndDelete({ _id: memberId });
   if (!deleteMember) {
-    throw new ApiError(404, "Team member dose not exist");
+    throw new ApiError(
+      500,
+      "Failed to delete member due to an unexpected server error. Please try again later"
+    );
   }
 
   const publicId = member.image.publicId;
@@ -166,7 +194,9 @@ const deleteMember = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Team member delete successfully"));
+    .json(
+      new ApiResponse(200, deleteMember, "Team member delete successfully")
+    );
 });
 
 export {
@@ -174,5 +204,6 @@ export {
   createMembers,
   getMemberById,
   updateMembers,
+  updateMemberImage,
   deleteMember,
 };
