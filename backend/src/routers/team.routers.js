@@ -6,6 +6,7 @@ import {
   deleteMember,
   getAllMembers,
   getMemberById,
+  updateMemberImage,
   updateMembers,
 } from "../controllers/team.controllers.js";
 
@@ -17,9 +18,13 @@ router
   .post(verifyJWT, upload.single("image"), createMembers);
 
 router
+  .route("/update-image/:memberId")
+  .patch(verifyJWT, upload.single("image"), updateMemberImage);
+
+router
   .route("/:memberId")
-  .get(verifyJWT, getMemberById)
-  .patch(verifyJWT, upload.single("image"), updateMembers)
+  .get(getMemberById)
+  .patch(verifyJWT, updateMembers)
   .delete(verifyJWT, deleteMember);
 
 export default router;
