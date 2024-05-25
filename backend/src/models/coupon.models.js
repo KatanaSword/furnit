@@ -7,14 +7,16 @@ const couponSchema = new Schema(
   {
     name: {
       type: String,
+      trim: true,
+      lowercase: true,
       required: true,
     },
-    coupenCode: {
+    couponCode: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      lowercase: true,
+      uppercase: true,
     },
     type: {
       type: String,
@@ -31,7 +33,7 @@ const couponSchema = new Schema(
     },
     startDate: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     expiryDate: {
       type: Date,
