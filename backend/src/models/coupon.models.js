@@ -39,6 +39,10 @@ const couponSchema = new Schema(
       type: Date,
       default: null,
     },
+    minimumCartValue: {
+      type: Number,
+      default: 0,
+    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
