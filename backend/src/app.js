@@ -22,6 +22,7 @@ import categoryRouter from "./routers/category.routers.js";
 import productRouter from "./routers/product.routers.js";
 import addressRouter from "./routers/address.routers.js";
 import teamRouter from "./routers/team.routers.js";
+import couponRouter from "./routers/coupon.routers.js";
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
@@ -29,5 +30,6 @@ app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/addresses", addressRouter);
 app.use("/api/v1/teams", teamRouter);
+app.use("/api/v1/coupons", couponRouter);
 
 export { app };
