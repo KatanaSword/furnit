@@ -23,6 +23,8 @@ import productRouter from "./routers/product.routers.js";
 import addressRouter from "./routers/address.routers.js";
 import teamRouter from "./routers/team.routers.js";
 import couponRouter from "./routers/coupon.routers.js";
+import wishlistRouter from "./routers/wishlist.routers.js";
+import contactusRouter from "./routers/contactus.routers.js";
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
@@ -31,5 +33,7 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/addresses", addressRouter);
 app.use("/api/v1/teams", teamRouter);
 app.use("/api/v1/coupons", couponRouter);
+app.use("/api/v1/wishlists", wishlistRouter);
+app.use("/api/v1/contactus", contactusRouter);
 
 export { app };
