@@ -29,9 +29,8 @@ export const AvailablePaymentProvider = Object.values(PaymentProvider);
 
 export const CouponTypes = {
   FLAT: "FLAT",
-  PERCENTAGE: "PERCENTAGE",
 };
 
 export const AvailableCouponType = Object.values(CouponTypes);
 
-export const USER_TEMPORARY_TOKEN_EXPIRY = 5 * 60 * 1000;
+export const USER_TEMPORARY_TOKEN_EXPIRY = 10 * 60 * 1000;
