@@ -49,10 +49,18 @@ const userSchema = new Schema(
     avatar: {
       type: {
         url: String,
+        publicId: String,
       },
       default: {
         url: "https://via.placeholder.com/200x200.png",
+        publicId: "",
       },
+    },
+    pronouns: {
+      type: String,
+    },
+    birthday: {
+      type: String,
     },
     refreshToken: {
       type: String,
