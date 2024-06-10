@@ -17,6 +17,7 @@ const teamSchema = new Schema(
     image: {
       type: {
         url: String,
+        publicId: String,
       },
       required: true,
     },
