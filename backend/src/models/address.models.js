@@ -4,6 +4,16 @@ import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const addressSchema = new Schema(
   {
+    name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    phoneNumber: {
+      type: Number,
+      trim: true,
+      required: true,
+    },
     addressLine1: {
       type: String,
       trim: true,
