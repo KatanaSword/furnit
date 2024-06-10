@@ -1,12 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import { User } from "./user.models.js";
-import { Coupon } from "./coupon.models.js";
-import { Product } from "./product.models.js";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const cartSchema = new Schema(
   {
-    item: {
+    items: {
       type: [
         {
           productId: {
