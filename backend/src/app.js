@@ -25,6 +25,7 @@ import teamRouter from "./routers/team.routers.js";
 import couponRouter from "./routers/coupon.routers.js";
 import wishlistRouter from "./routers/wishlist.routers.js";
 import contactusRouter from "./routers/contactus.routers.js";
+import cartRouter from "./routers/cart.routers.js";
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
@@ -35,5 +36,6 @@ app.use("/api/v1/teams", teamRouter);
 app.use("/api/v1/coupons", couponRouter);
 app.use("/api/v1/wishlists", wishlistRouter);
 app.use("/api/v1/contactus", contactusRouter);
+app.use("/api/v1/carts", cartRouter);
 
 export { app };
