@@ -5,10 +5,18 @@ import { Address } from "../models/address.models.js";
 import { getMongoosePaginationOptions } from "../utils/helpers.js";
 
 const createAddresses = asyncHandler(async (req, res) => {
-  const { addressLine1, addressLine2, pincode, city, state, country } =
-    req.body;
+  const {
+    name,
+    phoneNumber,
+    addressLine1,
+    addressLine2,
+    pincode,
+    city,
+    state,
+    country,
+  } = req.body;
   if (
-    [addressLine1, pincode, city, state, country].some(
+    [name, addressLine1, pincode, city, state, country].some(
       (field) => field?.trim() === ""
     )
   ) {
@@ -18,7 +26,16 @@ const createAddresses = asyncHandler(async (req, res) => {
     );
   }
 
+  if (!phoneNumber) {
+    throw new ApiError(
+      400,
+      "Missing or incomplete information. Please fill out all required fields to create address."
+    );
+  }
+
   const createAddress = await Address.create({
+    name,
+    phoneNumber,
     addressLine1,
     addressLine2,
     pincode,
@@ -84,14 +101,31 @@ const getAddressById = asyncHandler(async (req, res) => {
 });
 
 const updateAddress = asyncHandler(async (req, res) => {
-  const { addressLine1, addressLine2, pincode, city, state, country } =
-    req.body;
+  const {
+    name,
+    phoneNumber,
+    addressLine1,
+    addressLine2,
+    pincode,
+    city,
+    state,
+    country,
+  } = req.body;
   const { addressId } = req.params;
 
   const updateAddresses = await Address.findOneAndUpdate(
     { _id: addressId, owner: req.user._id },
     {
-      $set: { addressLine1, addressLine2, pincode, city, state, country },
+      $set: {
+        name,
+        phoneNumber,
+        addressLine1,
+        addressLine2,
+        pincode,
+        city,
+        state,
+        country,
+      },
     },
     { new: true }
   );
