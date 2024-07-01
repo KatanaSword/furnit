@@ -1,6 +1,6 @@
 import { Category } from "../models/category.models.js";
-import { ApiError } from "../utils/apiError.js";
-import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { getMongoosePaginationOptions } from "../utils/helpers.js";
 
