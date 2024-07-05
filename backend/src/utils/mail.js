@@ -58,4 +58,58 @@ const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
   };
 };
 
-export { sendEmail, forgotPasswordMailgenContent };
+const guestQuestionReplyMailgenContent = (fullName, question, reply) => {
+  return {
+    body: {
+      name: `${fullName}`,
+      intro:
+        "Thank you for reaching out with your question. I'm pleased to assist you and provide the information you need",
+      action: {
+        question: `Question: ${question}`,
+        answer: `Reply: ${reply}`,
+      },
+      outro:
+        "Need help, or have questions? Just reply to this email, we'd love to help.",
+    },
+  };
+};
+
+const orderConfirmatioMailgenContent = (username, items, totalCost) => {
+  return {
+    body: {
+      name: `${username}`,
+      intro: "Your order has been processed successfully",
+      table: {
+        data: items.map((item) => {
+          return {
+            item: item.product?.name,
+            price: `INR ${item.product?.price}/-`,
+            quantity: item.quantity,
+          };
+        }),
+        columns: {
+          customWidth: {
+            item: "20%",
+            price: "15%",
+            quantity: "15%",
+          },
+          customAlignment: {
+            price: "right",
+            quantity: "right",
+          },
+        },
+      },
+      outro: [
+        `Total order cost: INR ${totalCost}/-`,
+        "You can check the status of your order and more in your order history",
+      ],
+    },
+  };
+};
+
+export {
+  sendEmail,
+  forgotPasswordMailgenContent,
+  guestQuestionReplyMailgenContent,
+  orderConfirmatioMailgenContent,
+};
