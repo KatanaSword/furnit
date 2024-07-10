@@ -10,6 +10,7 @@ import { Address } from "../models/address.models.js";
 import { nanoid } from "nanoid";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { PaymentProvider } from "../constants.js";
+import crypto from "crypto";
 
 let razorpayInstance;
 try {
@@ -158,6 +159,7 @@ const generateRazorpayOrder = asyncHandler(async (req, res) => {
         paymentId: razorpayOrder.id,
         coupon: userCart.coupon?._id,
       });
+      console.log(unpaidOrder);
 
       if (unpaidOrder) {
         return res
@@ -180,10 +182,29 @@ const generateRazorpayOrder = asyncHandler(async (req, res) => {
   );
 });
 
+const verifyRazorpayPayment = asyncHandler(async (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
+
+  let body = razorpay_order_id + "|" + razorpay_payment_id;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.KEY_SECRET)
+    .update(body.toString())
+    .digest("hex");
+
+  if (expectedSignature === razorpay_signature) {
+    const order = await orderFulfillmentHelper(razorpay_payment_id, req);
+    return res
+      .status(201)
+      .json(new ApiResponse(201, order, "Order placed successfully"));
+  } else {
+    throw new ApiError(400, "Invalid razorpay signature");
+  }
+});
 const getOrderById = asyncHandler(async (req, res) => {});
 const getOrderListAdmin = asyncHandler(async (req, res) => {});
 const updateOrderStatus = asyncHandler(async (req, res) => {});
-const verifyRazorpayPayment = asyncHandler(async (req, res) => {});
 
 export {
   generateRazorpayOrder,
