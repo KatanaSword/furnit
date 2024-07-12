@@ -9,7 +9,7 @@ import { orderConfirmatioMailgenContent } from "../utils/mail.js";
 import { Address } from "../models/address.models.js";
 import { nanoid } from "nanoid";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { PaymentProvider } from "../constants.js";
+import { OrderStatus, PaymentProvider } from "../constants.js";
 import crypto from "crypto";
 
 let razorpayInstance;
@@ -75,7 +75,7 @@ const orderFulfillmentHelper = async (orderPaymentId, req) => {
 
 const generateRazorpayOrder = asyncHandler(async (req, res) => {
   const { addressId } = req.body;
-  console.log(addressId);
+
   if (!razorpayInstance) {
     console.log("RAZORPAY ERROR: `key_id` is mandatory");
     throw new ApiError(500, "Internet server error");
@@ -88,11 +88,10 @@ const generateRazorpayOrder = asyncHandler(async (req, res) => {
   if (!address) {
     throw new ApiError(404, "Address does not exists");
   }
-  console.log("Address:", address);
+
   const cart = await Cart.findOne({
     owner: req.user._id,
   });
-  console.log("Cart:", cart);
   if (!cart || !cart.items?.length) {
     throw new ApiError(400, "User cart is empty");
   }
@@ -102,21 +101,16 @@ const generateRazorpayOrder = asyncHandler(async (req, res) => {
 
   const totalPrice = userCart.cartTotal;
   const totalDiscountedPrice = userCart.discountedTotal;
-  console.log("Order Items:", orderItems);
-  console.log("User cart:", userCart);
-  console.log("Total Price:", totalPrice);
-  console.log("Total Discounted Price:", totalDiscountedPrice);
+
   const orderOptions = {
     amount: parseInt(totalDiscountedPrice) * 100,
     currency: "INR",
     receipt: nanoid(10),
   };
-  console.log("Order Options:", orderOptions);
 
   razorpayInstance.orders.create(
     orderOptions,
     async function (err, razorpayOrder) {
-      console.log(razorpayOrder);
       if (!razorpayOrder || (err && err.error)) {
         return res
           .status(err.statusCode)
@@ -155,11 +149,10 @@ const generateRazorpayOrder = asyncHandler(async (req, res) => {
         items: orderItems,
         orderPrice: totalPrice ?? 0,
         discountedOrderPrice: totalDiscountedPrice ?? 0,
-        PaymentProvider: PaymentProvider.RAZORPAY,
+        paymentProvider: PaymentProvider.RAZORPAY,
         paymentId: razorpayOrder.id,
         coupon: userCart.coupon?._id,
       });
-      console.log(unpaidOrder);
 
       if (unpaidOrder) {
         return res
@@ -202,9 +195,39 @@ const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid razorpay signature");
   }
 });
+
 const getOrderById = asyncHandler(async (req, res) => {});
 const getOrderListAdmin = asyncHandler(async (req, res) => {});
-const updateOrderStatus = asyncHandler(async (req, res) => {});
+
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  let order = await Order.findById(orderId);
+  if (!order) {
+    throw new ApiError(404, "Order does not exists");
+  }
+
+  if (order.status === OrderStatus.DELIVERED) {
+    throw new ApiError(400, "Order is already delivered");
+  }
+
+  order = await Order.findByIdAndUpdate(
+    orderId,
+    {
+      $set: {
+        status,
+      },
+    },
+    { new: true }
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { status }, "Order status changed successfully")
+    );
+});
 
 export {
   generateRazorpayOrder,
