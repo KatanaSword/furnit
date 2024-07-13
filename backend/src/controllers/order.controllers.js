@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { OrderStatus, PaymentProvider } from "../constants.js";
 import crypto from "crypto";
+import mongoose from "mongoose";
 
 let razorpayInstance;
 try {
@@ -196,7 +197,99 @@ const verifyRazorpayPayment = asyncHandler(async (req, res) => {
   }
 });
 
-const getOrderById = asyncHandler(async (req, res) => {});
+const getOrderById = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+
+  const order = await Order.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(orderId) },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "customer",
+        foreignField: "_id",
+        as: "customer",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              email: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "coupons",
+        localField: "coupon",
+        foreignField: "_id",
+        as: "coupon",
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              couponCode: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        customer: { $first: "$customer" },
+        coupon: { $ifNull: [{ $first: "$coupon" }, null] },
+      },
+    },
+    { $unwind: "$items" },
+    {
+      $lookup: {
+        from: "products",
+        localField: "items.productId",
+        foreignField: "_id",
+        as: "items.product",
+      },
+    },
+    {
+      $addFields: {
+        "items.product": { $first: "items.product" },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        order: { $first: "$$ROOT" },
+        orderItems: {
+          $push: {
+            _id: "$items._id",
+            quantity: "$items.quantity",
+            product: "$items.product",
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        "order.items": "$orderItems",
+      },
+    },
+    {
+      $project: {
+        orderItems: 0,
+      },
+    },
+  ]);
+  if (!order[0]) {
+    throw new ApiError(404, "Order does not exists");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, order[0], "Order fetched successfully"));
+});
+
 const getOrderListAdmin = asyncHandler(async (req, res) => {});
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
