@@ -9,9 +9,14 @@ import { orderConfirmatioMailgenContent } from "../utils/mail.js";
 import { Address } from "../models/address.models.js";
 import { nanoid } from "nanoid";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { OrderStatus, PaymentProvider } from "../constants.js";
+import {
+  AvailableOrderStatus,
+  OrderStatus,
+  PaymentProvider,
+} from "../constants.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
+import { getMongoosePaginationOptions } from "../utils/helpers.js";
 
 let razorpayInstance;
 try {
@@ -254,7 +259,7 @@ const getOrderById = asyncHandler(async (req, res) => {
     },
     {
       $addFields: {
-        "items.product": { $first: "items.product" },
+        "items.product": { $first: "$items.product" },
       },
     },
     {
@@ -290,7 +295,78 @@ const getOrderById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, order[0], "Order fetched successfully"));
 });
 
-const getOrderListAdmin = asyncHandler(async (req, res) => {});
+const getOrderListAdmin = asyncHandler(async (req, res) => {
+  const { status, page = 1, limit = 10 } = req.query;
+  const orderAggregate = await Order.aggregate([
+    {
+      $match:
+        status && AvailableOrderStatus.includes(status.toUpperCase())
+          ? { status: status.toUpperCase() }
+          : {},
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "customer",
+        foreignField: "_id",
+        as: "customer",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              email: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "coupons",
+        localField: "coupon",
+        foreignField: "_id",
+        as: "coupon",
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              couponCode: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        customer: { $first: "$customer" },
+        coupon: { $ifNull: [{ $first: "$coupon" }, null] },
+        totalOrderItems: { $size: "$items" },
+      },
+    },
+    {
+      $project: {
+        items: 0,
+      },
+    },
+  ]);
+
+  const orders = await Order.aggregatePaginate(
+    orderAggregate,
+    getMongoosePaginationOptions({
+      page,
+      limit,
+      customLabels: {
+        totalDocs: "totalOrders",
+        docs: "orders",
+      },
+    })
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, orders, "Orders fetched successfully"));
+});
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
