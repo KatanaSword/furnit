@@ -71,6 +71,23 @@ const updateReview = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updateReview, "Review update successfully"));
 });
 
-const deleteReview = asyncHandler(async (req, res) => {});
+const deleteReview = asyncHandler(async (req, res) => {
+  const { reviewId } = req.params;
+
+  const deleteReview = await Review.findOneAndDelete({
+    _id: new mongoose.Types.ObjectId(reviewId),
+    owner: req.user?._id,
+  });
+  if (!deleteReview) {
+    throw new ApiError(
+      404,
+      "Review does not exist or you are not authorized for this action."
+    );
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deleteReview, "Review delete successfully"));
+});
 
 export { addReview, getProductReviews, updateReview, deleteReview };
