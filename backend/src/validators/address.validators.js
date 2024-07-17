@@ -14,7 +14,26 @@ const addressCreateRequestBodyValidator = () => {
     body("city").trim().notEmpty().withMessage("City is required"),
     body("state").notEmpty().withMessage("State is required"),
     body("country").notEmpty().withMessage("Country is required"),
+    body("phoneNumber")
+      .trim()
+      .notEmpty()
+      .withMessage("Phone number is required")
+      .isLength({ max: 10 })
+      .withMessage("The phone number consists of 10 digits"),
   ];
 };
 
-export { addressCreateRequestBodyValidator };
+const addressUpdateRequestBodyValidator = () => {
+  return [
+    body("name").optional(),
+    body("addressLine1").optional(),
+    body("addressLine2").optional(),
+    body("pincode").optional(),
+    body("city").optional(),
+    body("state").optional(),
+    body("country").optional(),
+    body("phoneNumber").optional(),
+  ];
+};
+
+export { addressCreateRequestBodyValidator, addressUpdateRequestBodyValidator };
