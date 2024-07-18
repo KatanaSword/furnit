@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Product } from "../models/product.models.js";
 import { Review } from "../models/review.models.js";
 import mongoose from "mongoose";
+import { getMongoosePaginationOptions } from "../utils/helpers.js";
 
 const addReview = asyncHandler(async (req, res) => {
   const { productId } = req.params;
@@ -40,7 +41,50 @@ const addReview = asyncHandler(async (req, res) => {
     );
 });
 
-const getProductReviews = asyncHandler(async (req, res) => {});
+const getProductReviews = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  const { productId } = req.params;
+
+  const reviewAggregation = Review.aggregate([
+    {
+      $match: {
+        productId: new mongoose.Types.ObjectId(productId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "user",
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  const reviews = await Review.aggregatePaginate(
+    reviewAggregation,
+    getMongoosePaginationOptions({
+      page,
+      limit,
+      customLabels: {
+        totalDocs: "totalReviews",
+        docs: "reviews",
+      },
+    })
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, reviews, "Product review fetched successfully"));
+});
 
 const updateReview = asyncHandler(async (req, res) => {
   const { reviewId } = req.params;
