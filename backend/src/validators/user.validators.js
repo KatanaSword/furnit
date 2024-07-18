@@ -19,8 +19,14 @@ const userRegisterValidator = () => {
     body("password")
       .notEmpty()
       .withMessage("Password is required")
-      .isLength({ min: 8 })
-      .withMessage("Password must be at lease 8 characters long"),
+      .isStrongPassword({
+        minLength: 8,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "password must be at least 8 characters long, with at least one number and one special symbol"
+      ),
     body("phoneNumber")
       .trim()
       .notEmpty()
@@ -53,8 +59,25 @@ const userForgotPasswordValidator = () => {
   ];
 };
 
+const userResetPasswordValidator = () => {
+  return [
+    body("newPassword")
+      .notEmpty()
+      .withMessage("Password is required")
+      .isStrongPassword({
+        minLength: 8,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "password must be at least 8 characters long, with at least one number and one special symbol"
+      ),
+  ];
+};
+
 export {
   userRegisterValidator,
   userLoginValidator,
   userForgotPasswordValidator,
+  userResetPasswordValidator,
 };
