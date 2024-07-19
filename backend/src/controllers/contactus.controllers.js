@@ -68,7 +68,7 @@ const replyToQuestion = asyncHandler(async (req, res) => {
 
   sendEmail({
     email: question?.email,
-    subject: "Response to Your Question",
+    subject: "Your Recent Inquiry",
     mailgenContent: guestQuestionReplyMailgenContent(
       question.fullName,
       question.question,

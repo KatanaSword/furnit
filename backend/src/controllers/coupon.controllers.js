@@ -6,6 +6,7 @@ import { getMongoosePaginationOptions } from "../utils/helpers.js";
 import { CouponTypes } from "../constants.js";
 import mongoose from "mongoose";
 import { getCart } from "./cart.controllers.js";
+import { Cart } from "../models/cart.models.js";
 
 const getAllCoupons = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
@@ -302,7 +303,7 @@ const getValidCouponForCustomer = asyncHandler(async (req, res) => {
 
 const updateCouponActiveStatus = asyncHandler(async (req, res) => {
   const { couponId } = req.params;
-  const { isActive } = req.query;
+  const { isActive } = req.body;
 
   const updateCoupon = await Coupon.findByIdAndUpdate(
     couponId,
@@ -320,14 +321,16 @@ const updateCouponActiveStatus = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      200,
-      updateCoupon,
-      `Coupon is ${updateCoupon?.isActive ? "active" : "inactive"}`
+      new ApiResponse(
+        200,
+        updateCoupon,
+        `Coupon is ${updateCoupon?.isActive ? "active" : "inactive"}`
+      )
     );
 });
 
 const removeCouponFromCart = asyncHandler(async (req, res) => {
-  const removeCoupon = await findOneAndUpdate(
+  const removeCoupon = await Cart.findOneAndUpdate(
     {
       owner: req.user?._id,
     },

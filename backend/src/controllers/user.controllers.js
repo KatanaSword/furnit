@@ -167,47 +167,54 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-  const incomingRefreshToken =
-    req.cookies?.refreshToken || req.body?.refreshToken;
-  if (!incomingRefreshToken) {
-    throw new ApiError(401, "Missing or invalid refresh token");
-  }
+  try {
+    const incomingRefreshToken =
+      req.cookies?.refreshToken || req.body?.refreshToken;
+    if (!incomingRefreshToken) {
+      throw new ApiError(401, "Missing or invalid refresh token");
+    }
 
-  const decodedToken = jwt.verify(
-    incomingRefreshToken,
-    process.env.REFRESH_TOKEN_SECURE
-  );
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECURE
+    );
 
-  const user = await User.findById(decodedToken._id);
+    const user = await User.findById(decodedToken._id);
 
-  if (!user) {
+    if (!user) {
+      throw new ApiError(
+        401,
+        "Invalid or expired refresh token. Please log in again to obtain a new refresh token."
+      );
+    }
+
+    if (incomingRefreshToken !== user?.refreshToken) {
+      throw new ApiError(
+        401,
+        "Refresh token mismatch. Please reauthenticate to obtain a new access token"
+      );
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateAccessAndRefreshToken(user._id);
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken: newRefreshToken },
+          "New refresh token generated successfully"
+        )
+      );
+  } catch (error) {
     throw new ApiError(
       401,
-      "Invalid or expired refresh token. Please log in again to obtain a new refresh token."
+      error?.message || "Missing or invalid refresh token"
     );
   }
-
-  if (incomingRefreshToken !== user?.refreshToken) {
-    throw new ApiError(
-      401,
-      "Refresh token mismatch. Please reauthenticate to obtain a new access token"
-    );
-  }
-
-  const { accessToken, refreshToken: newRefreshToken } =
-    await generateAccessAndRefreshToken(user._id);
-
-  return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", newRefreshToken, options)
-    .json(
-      new ApiResponse(
-        200,
-        { accessToken, refreshToken: newRefreshToken },
-        "New refresh token generated successfully"
-      )
-    );
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -446,7 +453,7 @@ const updateAccountDetail = asyncHandler(async (req, res) => {
       }
     ).select("-password -refreshToken");
 
-    res
+    return res
       .status(200)
       .json(new ApiResponse(200, updateAccount, "Update account successfully"));
   } catch (error) {
