@@ -75,9 +75,29 @@ const userResetPasswordValidator = () => {
   ];
 };
 
+const userChangePassword = () => {
+  return [
+    body("currentPassword")
+      .notEmpty()
+      .withMessage("Current Password is required"),
+    body("newPassword")
+      .notEmpty()
+      .withMessage("New Password is required")
+      .isStrongPassword({
+        minLength: 8,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "password must be at least 8 characters long, with at least one number and one special symbol"
+      ),
+  ];
+};
+
 export {
   userRegisterValidator,
   userLoginValidator,
   userForgotPasswordValidator,
   userResetPasswordValidator,
+  userChangePassword,
 };
