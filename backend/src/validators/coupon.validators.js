@@ -103,8 +103,21 @@ const couponApplyValidator = () => {
   ];
 };
 
+const updateCouponActiveStatusValidator = () => {
+  return [
+    body("isActive")
+      .notEmpty()
+      .withMessage("Activity status is required")
+      .isBoolean({
+        strict: true,
+      })
+      .withMessage("isActive must be a boolean. Either true or false"),
+  ];
+};
+
 export {
   couponCreateRequestBodyValidator,
   couponUpdateRequestBodyValidator,
   couponApplyValidator,
+  updateCouponActiveStatusValidator,
 };
