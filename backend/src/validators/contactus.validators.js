@@ -18,4 +18,15 @@ const askQuestionRequestBodyValidator = () => {
   ];
 };
 
-export { askQuestionRequestBodyValidator };
+const replyToQuestionRequestBodyValidator = () => {
+  return [
+    body("reply")
+      .trim()
+      .notEmpty()
+      .withMessage("Reply a question")
+      .isLength({ max: 650 })
+      .withMessage("The reply should not exceed 650 characters."),
+  ];
+};
+
+export { askQuestionRequestBodyValidator, replyToQuestionRequestBodyValidator };
