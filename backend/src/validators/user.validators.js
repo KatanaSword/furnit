@@ -103,6 +103,20 @@ const userAssignRoleValidator = () => {
   ];
 };
 
+const userUpdateAccountValidator = () => {
+  return [
+    body("fullName").optional(),
+    body("username").optional(),
+    body("email").optional().isEmail().withMessage("Email is invalid"),
+    body("phoneNumber")
+      .optional()
+      .isMobilePhone("en-IN")
+      .withMessage("Phone number is invalid"),
+    body("pronouns").optional(),
+    body("birthday").optional(),
+  ];
+};
+
 export {
   userRegisterValidator,
   userLoginValidator,
@@ -110,4 +124,5 @@ export {
   userResetPasswordValidator,
   userChangePasswordValidator,
   userAssignRoleValidator,
+  userUpdateAccountValidator,
 };
