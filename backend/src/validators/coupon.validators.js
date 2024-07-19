@@ -93,4 +93,18 @@ const couponUpdateRequestBodyValidator = () => {
   ];
 };
 
-export { couponCreateRequestBodyValidator, couponUpdateRequestBodyValidator };
+const couponApplyValidator = () => {
+  return [
+    body("couponCode")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Coupon code is required"),
+  ];
+};
+
+export {
+  couponCreateRequestBodyValidator,
+  couponUpdateRequestBodyValidator,
+  couponApplyValidator,
+};
