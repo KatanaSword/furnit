@@ -7,4 +7,19 @@ const memberCreateRequiredBodyValidator = () => {
   ];
 };
 
-export { memberCreateRequiredBodyValidator };
+const memberUpdateRequiredBodyValidator = () => {
+  return [
+    body("name")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Member name is required"),
+    body("occupation")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Occupation is required"),
+  ];
+};
+
+export { memberCreateRequiredBodyValidator, memberUpdateRequiredBodyValidator };
