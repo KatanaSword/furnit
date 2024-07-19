@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { AvailableOrderStatus } from "../constants.js";
 
 const verifyRazorpayPaymentValidators = () => {
   return [
@@ -17,4 +18,14 @@ const verifyRazorpayPaymentValidators = () => {
   ];
 };
 
-export { verifyRazorpayPaymentValidators };
+const updateOrderStatusValidators = () => {
+  return [
+    body("status")
+      .trim()
+      .notEmpty()
+      .isIn(AvailableOrderStatus)
+      .withMessage("Invalid order status"),
+  ];
+};
+
+export { verifyRazorpayPaymentValidators, updateOrderStatusValidators };
