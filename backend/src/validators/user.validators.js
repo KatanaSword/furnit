@@ -1,5 +1,5 @@
 import { body, param } from "express-validator";
-import { AvailableUserRoles } from "../constants";
+import { AvailableUserRoles } from "../constants.js";
 
 const userRegisterValidator = () => {
   return [
@@ -105,15 +105,36 @@ const userAssignRoleValidator = () => {
 
 const userUpdateAccountValidator = () => {
   return [
-    body("fullName").optional(),
-    body("username").optional(),
-    body("email").optional().isEmail().withMessage("Email is invalid"),
+    body("fullName")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Fullname is required"),
+    body("username")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Username is required")
+      .isLength({ min: 3 })
+      .withMessage("Username must be at lease 3 characters long"),
+    body("email")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Email is invalid"),
     body("phoneNumber")
       .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Phone number is required")
+      .isLength({ max: 10, min: 10 })
+      .withMessage("Phone number is invalid. It must be 10 digits long.")
       .isMobilePhone("en-IN")
       .withMessage("Phone number is invalid"),
-    body("pronouns").optional(),
-    body("birthday").optional(),
+    body("pronouns").optional().trim(),
+    body("birthday").optional().trim(),
   ];
 };
 
