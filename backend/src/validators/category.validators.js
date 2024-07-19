@@ -6,4 +6,17 @@ const categoryCreateRequestBodyValidator = () => {
   ];
 };
 
-export { categoryCreateRequestBodyValidator };
+const categoryUpdateRequestBodyValidator = () => {
+  return [
+    body("name")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Category name is required"),
+  ];
+};
+
+export {
+  categoryCreateRequestBodyValidator,
+  categoryUpdateRequestBodyValidator,
+};
